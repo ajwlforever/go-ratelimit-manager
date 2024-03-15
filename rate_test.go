@@ -1,4 +1,4 @@
-package goratelimitmanager
+package github.com/ajwlforever/go-ratelimit-manager
 
 import (
 	"context"
@@ -131,4 +131,15 @@ func s(args ...interface{}) {
 func TestDot(t *testing.T) {
 	s([]string{"a", "b", "c", "d"})
 	s(1, 23, 3, 4)
+}
+
+func TestConfiguration(t *testing.T) {
+	svr, _ := NewRateLimitService("", NewRedisClient())
+	// 使用具体的限流器
+	res := svr.Limiters["api_ai"].TryAcquire(context.Background())
+	if res.Ok {
+		fmt.Println("access")
+	} else {
+		fmt.Println("reject")
+	}
 }

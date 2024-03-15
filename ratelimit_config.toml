@@ -1,0 +1,32 @@
+# RateLimiterService配置文件
+
+# TokenBucketLimiter
+[[Limiter]]
+    Type = "TokenBucketLimiter"
+    Key = "api_ai"
+    LimitRate = "1s"    # 每秒产生一个令牌
+    WaitTime = "500ms" # 最大等待时间500毫秒
+    MaxCount = 100 # 令牌桶最大容量
+
+# SlideWindowLimiter
+[[Limiter]]
+    Type = "SlideWindowLimiter"
+    Key = "user_login"
+    UnitTime = "60s" # 窗口时间60秒
+    SmallUnitTime = "1s" # 小窗口时间1秒
+    MaxCount = 5 # 窗口期允许最大请求数量
+
+[[Limiter]]
+    Type = "FixedWindowLimiter"
+    Key = "filedown"
+    UnitTime = "1s" # 窗口时间1秒钟
+    MaxCount = 10 # 窗口期允许最大请求数量
+
+[[Limiter]]
+    Type = "RedisTokenLimiter"
+    Key = "global_rate_limiter"  # redis key
+    IntervalPerPermit = "200ms" # 令牌产生速度
+    ResetBucketInterval = "1h" # 令牌桶刷新间隔
+    MaxCount = 1000 # 令牌桶最大容量
+    InitTokens = 500 # 初始化令牌数量
+ 

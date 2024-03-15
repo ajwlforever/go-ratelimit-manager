@@ -1,4 +1,4 @@
-package goratelimitmanager
+package github.com/ajwlforever/go-ratelimit-manager
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 // web 服务器使用ratelimit中间价
 // 测试 性能;
 
-var limiterSvr *RateLimiterService
+var limiterSvr *RateLimitService
 
 type MiddleWire func(http.HandlerFunc) http.HandlerFunc
 
@@ -71,13 +71,14 @@ func StartWeb() {
 	limiterSvr.Limiters[key1] = NewSlideWindowLimiter(time.Second*10, time.Second*5, 1)
 	// 固定窗口算法 5s 只允许通过一个请求
 	key2 := "fixed" //利用key值实现 某个接口的 自定义限流器
-	limiterSvr.Limiters[key2] = NewFixedWindowLimiter(time.Second*5, 1)
+	limiterSvr.Limiters[key2] = NewLimiter(WithFixedWindowLimiter(time.Second*5, 1))
 	key3 := "token"
 	// 5s 产生一个令牌，最多1个令牌 请求不到令牌阻塞2s
 	limiterSvr.Limiters[key3] = NewLimiter(WithTokenBucketLimiter(time.Second*5, 1, 2*time.Second))
 	//
 	key4 := "redis"
 	limiterSvr.Limiters[key4] = NewRedisTokenLimiter(
+		NewRedisClient(),
 		key4,
 		time.Second,
 		time.Hour,
@@ -97,7 +98,7 @@ func StartWeb() {
 
 }
 func init() {
-	limiterSvr = &RateLimiterService{
+	limiterSvr = &RateLimitService{
 		Limiters: make(map[string]Limiter, 0),
 	}
 }

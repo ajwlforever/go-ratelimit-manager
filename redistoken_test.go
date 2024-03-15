@@ -1,4 +1,4 @@
-package goratelimitmanager
+package github.com/ajwlforever/go-ratelimit-manager
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 
 func TestRedisToken1(t *testing.T) {
 	l := NewRedisTokenLimiter(
+		NewRedisClient(),
 		"test4",
 		time.Second,
 		time.Hour,

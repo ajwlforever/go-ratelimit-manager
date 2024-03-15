@@ -3,7 +3,7 @@
   2. intervalPerTokens - 生成令牌的间隔(ms)
   3. curTime - 当前时间
   4. initTokens - 令牌桶初始化的令牌数
-  5. bucketMaxTokens - 令牌桶的上限
+  5. MaxCount - 令牌桶的上限
   6. resetBucketInterval - 重置桶内令牌的时间间隔
   7. currentTokens - 当前桶内令牌数
   8. bucket - 当前 key 的令牌桶对象
@@ -13,7 +13,7 @@ local key = KEYS[1]
 local intervalPerTokens = tonumber(ARGV[1])
 local curTime = tonumber(ARGV[2])
 local initTokens = tonumber(ARGV[3])
-local bucketMaxTokens = tonumber(ARGV[4])
+local MaxCount = tonumber(ARGV[4])
 local resetBucketInterval = tonumber(ARGV[5])
 local bucket = redis.call('hgetall', key)
 local currentTokens
@@ -79,7 +79,7 @@ elseif table.maxn(bucket) == 4 then
 
             -- 更新当前令牌桶中的令牌数
             -- Math.min(根据时间生成的令牌数 + 剩下的令牌数, 桶的限制) => 超出桶最大令牌的就丢弃
-            currentTokens = math.min(grantedTokens + tokensRemaining, bucketMaxTokens)
+            currentTokens = math.min(grantedTokens + tokensRemaining, MaxCount)
         end
     else
         -- 如果当前时间小于或等于上次更新的时间, 说明刚刚初始化, 当前令牌数量等于桶内令牌数

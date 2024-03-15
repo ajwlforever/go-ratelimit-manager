@@ -1,4 +1,4 @@
-package goratelimitmanager
+package github.com/ajwlforever/go-ratelimit-manager
 
 import (
 	"context"

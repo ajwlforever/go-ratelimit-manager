@@ -8,10 +8,7 @@ import (
 )
 
 type RedisTokenLimiter struct {
-	rdb      *redis.Client
-	limiters map[string]LimitProlicy
-}
-type LimitProlicy struct {
+	rdb           *redis.Client
 	resetInterval time.Duration
 	maxCount      int
 	initTokens    int
@@ -19,7 +16,7 @@ type LimitProlicy struct {
 	key           string
 }
 
-func (r *LimitProlicy) toParams() []string {
+func (r *RedisTokenLimiter) toParams() []string {
 	res := make([]string, 0, 5)
 	res = append(res, r.resetInterval.String())
 	res = append(res, string(time.Now().UnixNano()))
@@ -32,14 +29,16 @@ func (r *RedisTokenLimiter) TryAcquire(key string) {
 
 }
 
-func NewRedisTokenLimiter(polices ...LimitProlicy) {
+func NewRedisTokenLimiter(key string, resetInterval time.Duration, maxCount int, initToken int, rate time.Duration) *RedisTokenLimiter {
 	limiter := &RedisTokenLimiter{
-		rdb:      NewRedisClient(), // todo 替换成集群redis
-		limiters: make(map[string]LimitProlicy),
+		rdb:           NewRedisClient(), // todo 替换成集群redis
+		key:           key,
+		resetInterval: resetInterval,
+		maxCount:      maxCount,
+		initTokens:    initToken,
+		rate:          rate,
 	}
-	for _, pol := range polices {
-		limiter.limiters[pol.key] = pol
-	}
+	return limiter
 
 }
 

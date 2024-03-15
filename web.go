@@ -10,10 +10,6 @@ import (
 // web 服务器使用ratelimit中间价
 // 测试 性能;
 
-type RateLimiterService struct {
-	Limiters map[string]Limiter
-}
-
 var limiterSvr *RateLimiterService
 
 type MiddleWire func(http.HandlerFunc) http.HandlerFunc

@@ -1,4 +1,4 @@
-package github.com/ajwlforever/go-ratelimit-manager
+package goratelimitmanager
 
 import (
 	"context"
@@ -6,8 +6,6 @@ import (
 	"strconv"
 	"testing"
 	"time"
-
-	"github.com/go-redis/redis/v8"
 )
 
 func TestRedisToken1(t *testing.T) {

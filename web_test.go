@@ -1,4 +1,4 @@
-package github.com/ajwlforever/go-ratelimit-manager
+package goratelimitmanager
 
 import (
 	"testing"

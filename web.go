@@ -11,7 +11,7 @@ import (
 // web 服务器使用ratelimit中间价
 // 测试 性能;
 
-var limiterSvr *RateLimiterService
+var limiterSvr *RateLimitService
 
 type MiddleWire func(http.HandlerFunc) http.HandlerFunc
 
@@ -78,6 +78,7 @@ func StartWeb() {
 	//
 	key4 := "redis"
 	limiterSvr.Limiters[key4] = NewRedisTokenLimiter(
+		NewRedisClient(),
 		key4,
 		time.Second,
 		time.Hour,
@@ -97,7 +98,7 @@ func StartWeb() {
 
 }
 func init() {
-	limiterSvr = &RateLimiterService{
+	limiterSvr = &RateLimitService{
 		Limiters: make(map[string]Limiter, 0),
 	}
 }

@@ -6,10 +6,13 @@ import (
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 func TestRedisToken1(t *testing.T) {
 	l := NewRedisTokenLimiter(
+		redis.NewClient(),
 		"test4",
 		time.Second,
 		time.Hour,

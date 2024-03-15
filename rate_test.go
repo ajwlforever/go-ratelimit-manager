@@ -132,3 +132,7 @@ func TestDot(t *testing.T) {
 	s([]string{"a", "b", "c", "d"})
 	s(1, 23, 3, 4)
 }
+
+func TestConfigt(t *testing.T) {
+	_, _ = NewRateLimitService("", NewRedisClient())
+}

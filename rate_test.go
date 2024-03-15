@@ -133,6 +133,13 @@ func TestDot(t *testing.T) {
 	s(1, 23, 3, 4)
 }
 
-func TestConfigt(t *testing.T) {
-	_, _ = NewRateLimitService("", NewRedisClient())
+func TestConfiguration(t *testing.T) {
+	svr, _ := NewRateLimitService("", NewRedisClient())
+	// 使用具体的限流器
+	res := svr.Limiters["api_ai"].TryAcquire(context.Background())
+	if res.Ok {
+		fmt.Println("access")
+	} else {
+		fmt.Println("reject")
+	}
 }

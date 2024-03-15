@@ -11,3 +11,78 @@
 7. todo 监控系统
 8. todo 平滑限流
 
+
+## Easy Use 
+### 1. Use
+
+#### (1). FixedWindowLimiter
+``` go
+// NewFixedWindowLimiter
+func NewFixedWindowLimiter(unitTime time.Duration, maxCount int) *FixedWindowLimiter
+```
+参数：
+``` go
+UnitTime time.Duration // 窗口时间
+MaxCount int           // number 窗口期允许请求的数量
+```
+新建：
+``` go
+limiter =  NewFixedWindowLimiter(time.Second*5, 1)
+
+```
+或者
+``` go
+limiter =   NewLimiter(WithFixedWindowLimiter(time.Second*5, 1))
+```
+#### (2). SlideWindowLimiter
+#### (3). TokenBucketLimiter
+#### (4). RedisTokenLimiter
+### 2.Configuration
+``` toml  
+# RateLimiterService配置文件
+
+# TokenBucketLimiter
+[[Limiter]]
+    Type = "TokenBucketLimiter"
+    Key = "api_ai"
+    LimitRate = "1s"    # 每秒产生一个令牌
+    WaitTime = "500ms" # 最大等待时间500毫秒
+    MaxCount = 100 # 令牌桶最大容量
+
+# SlideWindowLimiter
+[[Limiter]]
+    Type = "SlideWindowLimiter"
+    Key = "user_login"
+    UnitTime = "60s" # 窗口时间60秒
+    SmallUnitTime = "1s" # 小窗口时间1秒
+    MaxCount = 5 # 窗口期允许最大请求数量
+
+[[Limiter]]
+    Type = "FixedWindowLimiter"
+    Key = "filedown"
+    UnitTime = "1s" # 窗口时间1秒钟
+    MaxCount = 10 # 窗口期允许最大请求数量
+
+[[Limiter]]
+    Type = "RedisTokenLimiter"
+    Key = "global_rate_limiter"  # redis key
+    IntervalPerPermit = "200ms" # 令牌产生速度
+    ResetBucketInterval = "1h" # 令牌桶刷新间隔
+    MaxCount = 1000 # 令牌桶最大容量
+    InitTokens = 500 # 初始化令牌数量
+ 
+```
+`func NewRateLimitService(path string, rdb *redis.Client)` 中`path`是配置路径地址，rdb是redis客户端；如果path为空的话，config如上述所示。
+
+``` go
+func TestConfiguration(t *testing.T) {
+	svr, _ := NewRateLimitService("", NewRedisClient())
+	// 使用具体的限流器
+	res := svr.Limiters["api_ai"].TryAcquire(context.Background())
+	if res.Ok {
+		fmt.Println("access")
+	} else {
+		fmt.Println("reject")
+	}
+}
+```

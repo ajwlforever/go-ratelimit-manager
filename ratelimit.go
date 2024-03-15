@@ -130,9 +130,7 @@ func NewRateLimitService(path string, rdb *redis.Client) (svr *RateLimitService,
 			fmt.Println("Unknown Limiter Type:", c.Type)
 		}
 	}
-	for _, limiter := range svr.Limiters {
-		fmt.Println(limiter)
-	}
+
 	return
 
 }

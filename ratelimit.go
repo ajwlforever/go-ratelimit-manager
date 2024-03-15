@@ -1,6 +1,9 @@
 package goratelimitmanager
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type LimiterOption func() Limiter
 
@@ -8,7 +11,7 @@ type RateLimiterService struct {
 	Limiters map[string]Limiter
 }
 type Limiter interface {
-	TryAcquire() LimitResult
+	TryAcquire(ctx context.Context) LimitResult
 	// 有需要用key值来获取分布式令牌的
 	// todo StopLimiter
 }

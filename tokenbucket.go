@@ -1,6 +1,7 @@
 package goratelimitmanager
 
 import (
+	"context"
 	"sync"
 	"time"
 )
@@ -60,7 +61,7 @@ func (b *TokenBucketLimiter) produceToken() {
 	}
 }
 
-func (b *TokenBucketLimiter) TryAcquire() (res LimitResult) {
+func (b *TokenBucketLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 	// fmt.Println(time.Now())
 	select {
 	case <-b.TokenChan:

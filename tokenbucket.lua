@@ -15,7 +15,6 @@ local curTime = tonumber(ARGV[2])
 local initTokens = tonumber(ARGV[3])
 local bucketMaxTokens = tonumber(ARGV[4])
 local resetBucketInterval = tonumber(ARGV[5])
-
 local bucket = redis.call('hgetall', key)
 local currentTokens
 

@@ -1,10 +1,12 @@
 package goratelimitmanager
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -15,7 +17,8 @@ var acCnt int64
 
 func doA(limit Limiter) {
 	c += 1
-	if !limit.TryAcquire().Ok {
+	ctx := context.Background()
+	if !limit.TryAcquire(ctx).Ok {
 		//fmt.Println("reject")
 		rejcetCnt += 1
 		return
@@ -118,4 +121,14 @@ func TestSllep(t *testing.T) {
 	fmt.Println(time.Now())
 	time.Sleep(time.Second * 2)
 	fmt.Println(time.Now())
+}
+
+func s(args ...interface{}) {
+	fmt.Println(reflect.TypeOf(args))
+	fmt.Println(args...)
+	fmt.Println(args[0])
+}
+func TestDot(t *testing.T) {
+	s([]string{"a", "b", "c", "d"})
+	s(1, 23, 3, 4)
 }

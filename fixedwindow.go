@@ -1,6 +1,7 @@
 package goratelimitmanager
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -48,7 +49,7 @@ func (f *FixedWindowLimiter) resetWindow() {
 	}
 }
 
-func (limiter *FixedWindowLimiter) TryAcquire() (res LimitResult) {
+func (limiter *FixedWindowLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 	limiter.mu.Lock()
 	defer limiter.mu.Unlock()
 

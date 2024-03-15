@@ -1,6 +1,7 @@
 package goratelimitmanager
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -54,7 +55,7 @@ func (s *SlideWindowLimiter) slideWindow() {
 
 	}
 }
-func (s *SlideWindowLimiter) TryAcquire() (res LimitResult) {
+func (s *SlideWindowLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 	if s.Count < s.MaxCount {

@@ -2,41 +2,67 @@ package goratelimitmanager
 
 import (
 	"context"
+	"fmt"
+	"io"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/go-redis/redis/v8"
 )
 
 type RedisTokenLimiter struct {
-	rdb           *redis.Client
-	resetInterval time.Duration
-	maxCount      int
-	initTokens    int
-	rate          time.Duration // 令牌产生速度
-	key           string
+	rdb                 *redis.Client
+	intervalPerPermit   time.Duration // 令牌产生速度
+	resetBucketInterval time.Duration // 令牌桶刷新间隔
+	bucketMaxTokens     int
+	initTokens          int
+	key                 string
 }
 
-func (r *RedisTokenLimiter) toParams() []string {
-	res := make([]string, 0, 5)
-	res = append(res, r.resetInterval.String())
-	res = append(res, string(time.Now().UnixNano()))
-	res = append(res, string(r.maxCount))
-	res = append(res, string(r.initTokens))
+func (r *RedisTokenLimiter) toParams() []any {
+	res := make([]any, 0, 5)
+	res = append(res, int64(r.intervalPerPermit/time.Millisecond))   // 转换成以ms为单位  生成令牌的间隔(ms)
+	res = append(res, time.Now().UnixMilli())                        //当前时间
+	res = append(res, string(strconv.Itoa(r.initTokens)))            // 令牌桶初始化的令牌数
+	res = append(res, string(strconv.Itoa(r.bucketMaxTokens)))       // 令牌桶的上限
+	res = append(res, int64(r.resetBucketInterval/time.Millisecond)) // 重置桶内令牌的时间间隔
+
 	return res
 }
 
-func (r *RedisTokenLimiter) TryAcquire(key string) {
+func (r *RedisTokenLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
+	params := r.toParams()
 
+	luaPath := "tokenbucket.lua"
+	file, _ := os.Open(luaPath)
+	luas, _ := io.ReadAll(file)
+	fmt.Println(params...)
+	tokenScript := redis.NewScript(string(luas))
+	n, err := tokenScript.Eval(ctx, *r.rdb, []string{r.key}, params...).Result()
+	if err != nil {
+		panic("failed to exec lua script: " + err.Error())
+	}
+	fmt.Println("remaining tokens: ", n)
+	if n.(int64) <= 0 {
+		res.Ok = false
+	} else {
+		res.Ok = true
+	}
+
+	return
 }
 
-func NewRedisTokenLimiter(key string, resetInterval time.Duration, maxCount int, initToken int, rate time.Duration) *RedisTokenLimiter {
+func NewRedisTokenLimiter(key string, intervalPerPermit time.Duration, resetBucketInterval time.Duration,
+	initToken int, bucketMaxTokens int) *RedisTokenLimiter {
+
 	limiter := &RedisTokenLimiter{
-		rdb:           NewRedisClient(), // todo 替换成集群redis
-		key:           key,
-		resetInterval: resetInterval,
-		maxCount:      maxCount,
-		initTokens:    initToken,
-		rate:          rate,
+		rdb:                 NewRedisClient(), // todo 替换成可自定义配置redis
+		key:                 key,
+		resetBucketInterval: resetBucketInterval,
+		initTokens:          initToken,
+		bucketMaxTokens:     bucketMaxTokens,
+		intervalPerPermit:   intervalPerPermit,
 	}
 	return limiter
 

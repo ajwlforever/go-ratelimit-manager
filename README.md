@@ -13,6 +13,27 @@
 
 
 ## Easy Use 
+``` go
+go get github.com/ajwlforever/go-ratelimit-manager@latest
+```
+
+``` go
+import (
+	rate "github.com/ajwlforever/go-ratelimit-manager"
+)
+
+func main() {
+	svr, _ := rate.NewRateLimitService("configs\\ratelimit_config.toml", rate.NewRedisClient())
+	// 使用具体的限流器
+	res := svr.Limiters["api_ai"].TryAcquire(context.Background())
+	if res.Ok {
+		fmt.Println("access")
+	} else {
+		fmt.Println("reject")
+	}
+}
+
+```
 ### 1. Use
 
 #### (1). FixedWindowLimiter

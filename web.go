@@ -97,6 +97,10 @@ func StartWeb() {
 	}
 
 }
+
+func StartWebConfiguration() {
+
+}
 func init() {
 	limiterSvr = &RateLimitService{
 		Limiters: make(map[string]Limiter, 0),

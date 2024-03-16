@@ -1,7 +1,7 @@
 package goratelimitmanager
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -27,9 +27,9 @@ func (wd *watchDog) Start() {
 
 func (wd *watchDog) watch() {
 	defer func() {
-		fmt.Printf("Failed to WatchDog\n")
+		log.Printf("Failed to WatchDog\n")
 		if x := recover(); x != nil {
-			fmt.Printf("Restart WatchDog: %v\n", x)
+			log.Printf("Restart WatchDog: %v\n", x)
 			go wd.Start()
 		}
 	}()
@@ -38,7 +38,7 @@ func (wd *watchDog) watch() {
 		select {
 		case <-wd.ticker.C:
 			//todo watchDog 在这里执行你的周期性任务
-			fmt.Println("watchDog tick")
+			log.Println("watchDog tick")
 		case <-wd.stopCh:
 			return
 		}

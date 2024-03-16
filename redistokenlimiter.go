@@ -2,8 +2,8 @@ package goratelimitmanager
 
 import (
 	"context"
-	"fmt"
 	"io"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -37,13 +37,13 @@ func (r *RedisTokenLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 	luaPath := "tokenbucket.lua"
 	file, _ := os.Open(luaPath)
 	luas, _ := io.ReadAll(file)
-	fmt.Println(params...)
+	log.Println(params...)
 	tokenScript := redis.NewScript(string(luas))
 	n, err := tokenScript.Eval(ctx, *r.rdb, []string{r.key}, params...).Result()
 	if err != nil {
 		panic("failed to exec lua script: " + err.Error())
 	}
-	fmt.Println("remaining tokens: ", n)
+	log.Println("remaining tokens: ", n)
 	if n.(int64) <= 0 {
 		res.Ok = false
 	} else {

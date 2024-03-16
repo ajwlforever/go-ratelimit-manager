@@ -2,7 +2,7 @@ package goratelimitmanager
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -33,21 +33,20 @@ func NewSlideWindowLimiter(unitTime time.Duration, smallUnitTime time.Duration, 
 
 func (s *SlideWindowLimiter) slideWindow() {
 	defer func() {
-		fmt.Printf("Failed to slide window")
+		log.Printf("Failed to slide window")
 		if x := recover(); x != nil {
-			fmt.Printf("Failed to slide window: %v", x)
+			log.Printf("Failed to slide window: %v", x)
 			go s.slideWindow()
 		}
 	}()
 	ticker := time.NewTicker(s.SmallUnitTime) // 每个小窗口时间，就滑动！
-	fmt.Println("slideWindow")
 	for range ticker.C {
 		s.Mu.Lock()
 		// 滑动
 		s.Count -= s.Cnts[s.Index]
 		s.Cnts[s.Index] = 0
 		s.Index++
-		// fmt.Println(s.Count)
+		//  log.Println(s.Count)
 		if s.Index >= len(s.Cnts) {
 			s.Index = 0
 		}

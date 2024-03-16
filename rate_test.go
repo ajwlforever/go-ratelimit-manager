@@ -3,8 +3,8 @@ package goratelimitmanager
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -22,12 +22,12 @@ func doA(limit Limiter) {
 	c += 1
 	ctx := context.Background()
 	if !limit.TryAcquire(ctx).Ok {
-		//fmt.Println("reject")
+		// log.Println("reject")
 		rejcetCnt += 1
 		return
 	}
 	acCnt += 1
-	//fmt.Println("do")
+	// log.Println("do")
 }
 
 func TestFixedWindow1(t *testing.T) {
@@ -64,12 +64,12 @@ func TestTime(t *testing.T) {
 	time.Sleep(time.Second * 5)
 	after := time.Now()
 
-	fmt.Println(now)
-	fmt.Println(after.Sub(now))
+	log.Println(now)
+	log.Println(after.Sub(now))
 	// sub := after.Sub(now).Seconds()
 
 	duration := time.Duration(after.Sub(now).Seconds() * float64(time.Second))
-	fmt.Println("duration:", duration)
+	log.Println("duration:", duration)
 	// 判断两个Duration 是否相等，
 
 }
@@ -78,7 +78,7 @@ func TestTimer(t *testing.T) {
 	timer := time.NewTimer(time.Second)
 	for {
 		<-timer.C
-		fmt.Println("timer")
+		log.Println("timer")
 		timer.Reset(time.Second)
 	}
 }
@@ -86,14 +86,14 @@ func TestTimer(t *testing.T) {
 func TestTicker(t *testing.T) {
 	ticker := time.NewTicker(time.Second)
 	for range ticker.C {
-		fmt.Println("timer")
+		log.Println("timer")
 		ticker.Reset(time.Second)
 	}
 }
 
 func TestCalulateWindowCnt(t *testing.T) {
 	s := calculateWindowCount(time.Hour, time.Millisecond*33)
-	fmt.Println(s)
+	log.Println(s)
 }
 
 func TestSlidWindowLimiter(t *testing.T) {
@@ -106,10 +106,10 @@ func TestSlidWindowLimiter(t *testing.T) {
 		go doACircu(limiter)
 	}
 	time.Sleep(time.Second * 10)
-	fmt.Println("all count:", c)
-	fmt.Println("rejectCount:", rejcetCnt)
-	fmt.Println("accesscCount:", acCnt)
-	fmt.Println("ac+rej:", acCnt+rejcetCnt)
+	log.Println("all count:", c)
+	log.Println("rejectCount:", rejcetCnt)
+	log.Println("accesscCount:", acCnt)
+	log.Println("ac+rej:", acCnt+rejcetCnt)
 
 }
 
@@ -121,15 +121,15 @@ func doACircu(limiter Limiter) {
 }
 
 func TestSllep(t *testing.T) {
-	fmt.Println(time.Now())
+	log.Println(time.Now())
 	time.Sleep(time.Second * 2)
-	fmt.Println(time.Now())
+	log.Println(time.Now())
 }
 
 func s(args ...interface{}) {
-	fmt.Println(reflect.TypeOf(args))
-	fmt.Println(args...)
-	fmt.Println(args[0])
+	log.Println(reflect.TypeOf(args))
+	log.Println(args...)
+	log.Println(args[0])
 }
 func TestDot(t *testing.T) {
 	s([]string{"a", "b", "c", "d"})
@@ -141,9 +141,9 @@ func TestConfiguration(t *testing.T) {
 	// 使用具体的限流器
 	res := svr.Limiters["api_ai"].TryAcquire(context.Background())
 	if res.Ok {
-		fmt.Println("access")
+		log.Println("access")
 	} else {
-		fmt.Println("reject")
+		log.Println("reject")
 	}
 }
 
@@ -155,11 +155,11 @@ func Test123(t *testing.T) {
 func test() {
 	totalLines, err := countLinesInDir(".")
 	if err != nil {
-		fmt.Printf("Error counting lines: %s\n", err)
+		log.Printf("Error counting lines: %s\n", err)
 		return
 	}
 
-	fmt.Printf("Total lines of code: %d\n", totalLines)
+	log.Printf("Total lines of code: %d\n", totalLines)
 }
 
 // countLinesInDir 返回指定目录及其所有子目录中所有Go文件的代码行数总和
@@ -216,6 +216,6 @@ func countLinesInFile(filePath string) (int, error) {
 
 func TestWatchDog(t *testing.T) {
 	svr, _ := NewRateLimitService("", NewRedisClient(), WithWatchDog(time.Second*5))
-	fmt.Println(svr)
+	log.Println(svr)
 	time.Sleep(time.Hour * 5)
 }

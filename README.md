@@ -27,9 +27,9 @@ func main() {
 	// 使用具体的限流器
 	res := svr.Limiters["api_ai"].TryAcquire(context.Background())
 	if res.Ok {
-		fmt.Println("access")
+		 log.Println("access")
 	} else {
-		fmt.Println("reject")
+		 log.Println("reject")
 	}
 }
 
@@ -125,9 +125,9 @@ func TestConfiguration(t *testing.T) {
 	// 使用具体的限流器
 	res := svr.Limiters["api_ai"].TryAcquire(context.Background())
 	if res.Ok {
-		fmt.Println("access")
+		 log.Println("access")
 	} else {
-		fmt.Println("reject")
+		 log.Println("reject")
 	}
 }
 ```

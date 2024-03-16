@@ -50,9 +50,9 @@ func (b *TokenBucketLimiter) produceToken() {
 			b.Mu.Unlock()
 			return
 		}
-		//fmt.Println(time.Now())
+		// log.Println(time.Now())
 		if cap(b.TokenChan) == len(b.TokenChan) {
-			//fmt.Println("桶满了！")
+			// log.Println("桶满了！")
 		} else {
 			b.TokenChan <- struct{}{}
 		}
@@ -62,7 +62,7 @@ func (b *TokenBucketLimiter) produceToken() {
 }
 
 func (b *TokenBucketLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
-	// fmt.Println(time.Now())
+	//  log.Println(time.Now())
 	select {
 	case <-b.TokenChan:
 		res.Ok = true

@@ -2,7 +2,7 @@ package goratelimitmanager
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -33,15 +33,15 @@ func NewFixedWindowLimiter(unitTime time.Duration, maxCount int) *FixedWindowLim
 func (f *FixedWindowLimiter) resetWindow() {
 	defer func() {
 		if x := recover(); x != nil {
-			fmt.Printf("Failed to reset window: %v", x)
+			log.Printf("Failed to reset window: %v", x)
 			go f.resetWindow()
 		}
 	}()
 	ticker := time.NewTicker(f.UnitTime)
-	fmt.Println("resetWindow")
+	// log.Println("resetWindow")
 	for range ticker.C {
 		f.mu.Lock()
-		//fmt.Println("reset window")
+		// log.Println("reset window")
 		f.Count = 0
 		// f.LastReqTime = time.Now().Add(-f.UnitTime)
 		f.mu.Unlock()

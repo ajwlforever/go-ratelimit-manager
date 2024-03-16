@@ -2,7 +2,7 @@ package goratelimitmanager
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/BurntSushi/toml"
@@ -52,21 +52,21 @@ func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr
 	var config RateLimitConfig
 	// 读取配置文件
 	if _, err = toml.DecodeFile(ConfigPath, &config); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	svr = &RateLimitService{
 		Limiters: make(map[string]Limiter),
 	}
 
-	// todo fmt change to log
+	// todo  log change to log
 	// Limiters 注入 svr
 	for idx, c := range config.Limiters {
 		switch c.Type {
 		case "TokenBucketLimiter":
 			if paramsCheck(c.LimitRate, c.WaitTime, c.Key) && c.MaxCount > 0 {
 				// 根据配置初始化TokenBucketLimiter
-				fmt.Println("Initializing TokenBucketLimiter:", c.Key)
+				log.Println("Initializing TokenBucketLimiter:", c.Key)
 				var lr, wt time.Duration
 				lr, err = time.ParseDuration(c.LimitRate)
 				wt, err = time.ParseDuration(c.WaitTime)
@@ -84,7 +84,7 @@ func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr
 		case "SlideWindowLimiter":
 			if paramsCheck(c.Key, c.UnitTime, c.SmallUnitTime) && c.MaxCount > 0 {
 				// 根据配置初始化SlideWindowLimiter
-				fmt.Println("Initializing SlideWindowLimiter:", c.Key)
+				log.Println("Initializing SlideWindowLimiter:", c.Key)
 				var ut, st time.Duration
 				ut, err = time.ParseDuration(c.UnitTime)
 				st, err = time.ParseDuration(c.SmallUnitTime)
@@ -99,7 +99,7 @@ func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr
 			}
 		case "FixedWindowLimiter":
 			if paramsCheck(c.Key, c.UnitTime) && c.MaxCount > 0 {
-				fmt.Println("Initializing FixedWindowLimiter:", c.Key)
+				log.Println("Initializing FixedWindowLimiter:", c.Key)
 				var ut time.Duration
 				ut, err = time.ParseDuration(c.UnitTime)
 				if err != nil {
@@ -114,7 +114,7 @@ func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr
 		case "RedisTokenLimiter":
 			if paramsCheck(c.Key, c.IntervalPerPermit, c.ResetBucketInterval) && c.MaxCount > 0 && c.InitTokens <= c.MaxCount {
 				// 根据配置初始化RedisTokenLimiter
-				fmt.Println("Initializing RedisTokenLimiter:", c.Key)
+				log.Println("Initializing RedisTokenLimiter:", c.Key)
 				// 确保传递rdb到RedisTokenLimiter的构造函数中
 				var interval, reset time.Duration
 				interval, err = time.ParseDuration(c.IntervalPerPermit)
@@ -129,7 +129,7 @@ func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr
 				panicInitRLConfig(idx)
 			}
 		default:
-			fmt.Println("Unknown Limiter Type:", c.Type)
+			log.Println("Unknown Limiter Type:", c.Type)
 		}
 	}
 
@@ -207,6 +207,6 @@ func paramsCheck(ss ...string) bool {
 }
 
 func panicInitRLConfig(idx int) {
-	fmt.Printf("init RateLimitConfiguration error, look at the %v limiter", idx+1)
+	log.Printf("init RateLimitConfiguration error, look at the %v limiter", idx+1)
 	panic("init RateLimitConfiguration error")
 }

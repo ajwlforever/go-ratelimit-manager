@@ -2,8 +2,8 @@ package goratelimitmanager
 
 import (
 	"context"
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -24,14 +24,12 @@ func RateLimiting(key string) MiddleWire {
 			ctx := context.Background()
 			res := limiterSvr.Limiters[key].TryAcquire(ctx)
 			if !res.Ok {
-				fmt.Println("rejected")
+				log.Println("rejected")
 				// 有些限流策略允许请求在 WaitTime后重试
 				if res.WaitTime != 0 {
-					fmt.Println(time.Now())
 					time.Sleep(res.WaitTime)
-					fmt.Println(time.Now())
 					if res = limiterSvr.Limiters[key].TryAcquire(ctx); !res.Ok {
-						fmt.Println("rejected again")
+						log.Println("rejected again")
 						w.WriteHeader(http.StatusTooManyRequests)
 						return
 					}
@@ -41,7 +39,7 @@ func RateLimiting(key string) MiddleWire {
 				}
 			}
 
-			fmt.Println("accepted")
+			log.Println("accepted")
 			// 调用下一个HandlerFunc
 			f(w, r)
 
@@ -50,7 +48,7 @@ func RateLimiting(key string) MiddleWire {
 }
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("ing")
+	// log.Println("ing")
 	w.Header().Set("Content-Type", "text/html")
 	io.WriteString(w, "<h1>hello, world</h1>")
 	return
@@ -92,7 +90,7 @@ func StartWeb() {
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
-		fmt.Println(" http.ListenAndServe Error: ")
+		log.Println(" http.ListenAndServe Error: ")
 		panic(err)
 	}
 

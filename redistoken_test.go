@@ -2,7 +2,7 @@ package goratelimitmanager
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"strconv"
 	"testing"
 	"time"
@@ -20,12 +20,12 @@ func TestRedisToken1(t *testing.T) {
 	ctx := context.Background()
 	timer := time.NewTicker(time.Second * 2)
 	for range timer.C {
-		fmt.Println(l.TryAcquire(ctx))
+		log.Println(l.TryAcquire(ctx))
 	}
-	fmt.Println(l.TryAcquire(ctx))
+	log.Println(l.TryAcquire(ctx))
 }
 
 func Test1(t *testing.T) {
 	//td := time.Second
-	fmt.Println(strconv.Itoa((100)))
+	log.Println(strconv.Itoa((100)))
 }

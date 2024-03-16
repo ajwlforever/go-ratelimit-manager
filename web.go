@@ -66,13 +66,13 @@ func ChaninFunc(f http.HandlerFunc, middleWires ...MiddleWire) http.HandlerFunc 
 func StartWeb() {
 	// 滑动窗口算法 1s为大窗口 0.1s 为小窗口
 	key1 := "slide1"
-	limiterSvr.Limiters[key1] = NewSlideWindowLimiter(time.Second*10, time.Second*5, 1)
+	limiterSvr.Limiters[key1] = NewSlideWindowLimiter(key1, time.Second*10, time.Second*5, 1)
 	// 固定窗口算法 5s 只允许通过一个请求
 	key2 := "fixed" //利用key值实现 某个接口的 自定义限流器
-	limiterSvr.Limiters[key2] = NewLimiter(WithFixedWindowLimiter(time.Second*5, 1))
+	limiterSvr.Limiters[key2] = NewLimiter(WithFixedWindowLimiter(key2, time.Second*5, 1))
 	key3 := "token"
 	// 5s 产生一个令牌，最多1个令牌 请求不到令牌阻塞2s
-	limiterSvr.Limiters[key3] = NewLimiter(WithTokenBucketLimiter(time.Second*5, 1, 2*time.Second))
+	limiterSvr.Limiters[key3] = NewLimiter(WithTokenBucketLimiter(key3, time.Second*5, 1, 2*time.Second))
 	//
 	key4 := "redis"
 	limiterSvr.Limiters[key4] = NewRedisTokenLimiter(

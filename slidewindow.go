@@ -15,18 +15,23 @@ type SlideWindowLimiter struct {
 	Count         int           // 实际的请求数量
 	MaxCount      int           // number 窗口期允许请求的数量
 	Mu            sync.Mutex    //
+	Record        *LimitRecord
+	Key           string //
 }
 
-func NewSlideWindowLimiter(unitTime time.Duration, smallUnitTime time.Duration, maxCount int) *SlideWindowLimiter {
+func NewSlideWindowLimiter(key string, unitTime time.Duration, smallUnitTime time.Duration, maxCount int) *SlideWindowLimiter {
 
 	windowCount := calculateWindowCount(unitTime, smallUnitTime)
 	s := &SlideWindowLimiter{
+		Key:           key,
 		UnitTime:      unitTime,
 		SmallUnitTime: smallUnitTime,
 		MaxCount:      maxCount,
 		Cnts:          make([]int, windowCount),
 		Index:         0,
+		Record:        NewLimitRecord(),
 	}
+
 	go s.slideWindow()
 	return s
 }
@@ -64,7 +69,19 @@ func (s *SlideWindowLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 		return
 	}
 	res.Ok = false
+	s.record(res)
 	return
+}
+
+// record 记录尝试请求的最终结果
+func (s *SlideWindowLimiter) record(res LimitResult) {
+	item := &Item{
+		Timestamp: time.Now(),
+		Key:       s.Key,
+		Allowed:   res.Ok,
+		Reason:    "SlideWindowLimiter rejected",
+	}
+	s.Record.Save(item, DETAIL_LEVEL_1)
 }
 
 // calculateWindowCount 计算 unitTime 被 smallUnitTime划分为几份

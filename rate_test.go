@@ -33,8 +33,8 @@ func doA(limit Limiter) {
 func TestFixedWindow1(t *testing.T) {
 	interval := time.Millisecond * 100 // 0.1s
 	ticker := time.NewTicker(interval)
-	// 1s 5个请求
-	limiter := NewFixedWindowLimiter(time.Second, 5)
+	// 1s 5个请求、
+	limiter := NewFixedWindowLimiter("f1", time.Second, 5)
 	cnt := 0
 	for range ticker.C {
 		doA(limiter)
@@ -100,7 +100,7 @@ func TestSlidWindowLimiter(t *testing.T) {
 	c = 0
 	rejcetCnt = 0
 	acCnt = 0
-	limiter := NewSlideWindowLimiter(time.Second, time.Millisecond*100, 100)
+	limiter := NewSlideWindowLimiter("1", time.Second, time.Millisecond*100, 100)
 
 	for i := 0; i < 20; i++ {
 		go doACircu(limiter)

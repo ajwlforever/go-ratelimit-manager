@@ -74,6 +74,7 @@ func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr
 					panicInitRLConfig(idx)
 				}
 				svr.Limiters[c.Key] = NewLimiter(WithTokenBucketLimiter(
+					c.Key,
 					lr,
 					c.MaxCount,
 					wt,
@@ -92,7 +93,7 @@ func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr
 					panicInitRLConfig(idx)
 				}
 				svr.Limiters[c.Key] = NewLimiter(WithSlideWindowLimiter(
-					ut, st, c.MaxCount,
+					c.Key, ut, st, c.MaxCount,
 				))
 			} else {
 				panicInitRLConfig(idx)
@@ -106,7 +107,7 @@ func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr
 					panicInitRLConfig(idx)
 				}
 				svr.Limiters[c.Key] = NewLimiter(WithFixedWindowLimiter(
-					ut, c.MaxCount,
+					c.Key, ut, c.MaxCount,
 				))
 			} else {
 				panicInitRLConfig(idx)
@@ -154,25 +155,25 @@ func WithWatchDog(t time.Duration) OptionFunc {
 }
 
 // 创建固定窗口限流器的Option
-func WithFixedWindowLimiter(unitTime time.Duration, maxCount int) LimiterOption {
+func WithFixedWindowLimiter(key string, unitTime time.Duration, maxCount int) LimiterOption {
 	return func() Limiter {
-		limiter := NewFixedWindowLimiter(unitTime, maxCount)
+		limiter := NewFixedWindowLimiter(key, unitTime, maxCount)
 		return limiter
 	}
 }
 
 // 创建滑动窗口限流器的Option
-func WithSlideWindowLimiter(unitTime time.Duration, smallUnitTime time.Duration, maxCount int) LimiterOption {
+func WithSlideWindowLimiter(key string, unitTime time.Duration, smallUnitTime time.Duration, maxCount int) LimiterOption {
 	return func() Limiter {
-		limiter := NewSlideWindowLimiter(unitTime, smallUnitTime, maxCount)
+		limiter := NewSlideWindowLimiter(key, unitTime, smallUnitTime, maxCount)
 		return limiter
 	}
 }
 
 // 创建令牌桶限流器的Option
-func WithTokenBucketLimiter(limitRate time.Duration, maxCount int, waitTime time.Duration) LimiterOption {
+func WithTokenBucketLimiter(key string, limitRate time.Duration, maxCount int, waitTime time.Duration) LimiterOption {
 	return func() Limiter {
-		limiter := NewTokenBucketLimiter(limitRate, maxCount, waitTime)
+		limiter := NewTokenBucketLimiter(key, limitRate, maxCount, waitTime)
 		return limiter
 	}
 }
@@ -190,11 +191,6 @@ func WithRedisTokenLimiter(rdb *redis.Client, key string, intervalPerPermit time
 
 func NewLimiter(option LimiterOption) Limiter {
 	return option()
-}
-
-// LimiterRecord 限流情况全部记录下来。
-// todo LimiterRecord 限流情况全部记录下来。
-type LimiterRecord struct {
 }
 
 func paramsCheck(ss ...string) bool {

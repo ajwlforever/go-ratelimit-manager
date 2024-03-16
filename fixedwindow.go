@@ -15,15 +15,17 @@ type FixedWindowLimiter struct {
 	Count    int           // 实际的请求数量
 	MaxCount int           // number 窗口期允许请求的数量
 	mu       sync.Mutex
+	Key      string //
 }
 
 // NewFixedWindowLimiter
-func NewFixedWindowLimiter(unitTime time.Duration, maxCount int) *FixedWindowLimiter {
+func NewFixedWindowLimiter(key string, unitTime time.Duration, maxCount int) *FixedWindowLimiter {
 
 	f := &FixedWindowLimiter{
 		UnitTime: unitTime,
 		Count:    0,
 		MaxCount: maxCount,
+		Key:      key,
 	}
 	go f.resetWindow()
 	return f

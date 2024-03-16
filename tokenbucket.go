@@ -15,14 +15,16 @@ type TokenBucketLimiter struct {
 
 	Mu   *sync.Mutex // 令牌桶锁，保证线程安全
 	Stop bool        // 停止标记，结束令牌桶
+	Key  string
 }
 
 // NewTokenBucketLimiter
-func NewTokenBucketLimiter(limitRate time.Duration, maxCount int, waitTime time.Duration) *TokenBucketLimiter {
+func NewTokenBucketLimiter(key string, limitRate time.Duration, maxCount int, waitTime time.Duration) *TokenBucketLimiter {
 	if maxCount < 1 {
 		panic("token bucket cap must be large 1")
 	}
 	l := &TokenBucketLimiter{
+		Key:       key,
 		LimitRate: limitRate,
 		TokenChan: make(chan struct{}, maxCount),
 		WaitTime:  waitTime,

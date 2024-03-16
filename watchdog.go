@@ -21,11 +21,13 @@ func newWatchDog(d time.Duration) *watchDog {
 	}
 }
 
-func (wd *watchDog) Start() {
-	go wd.watch()
+type watchSomthing func()
+
+func (wd *watchDog) Start(ops ...watchSomthing) {
+	go wd.watch(ops...)
 }
 
-func (wd *watchDog) watch() {
+func (wd *watchDog) watch(ops ...watchSomthing) {
 	defer func() {
 		log.Printf("Failed to WatchDog\n")
 		if x := recover(); x != nil {
@@ -39,6 +41,9 @@ func (wd *watchDog) watch() {
 		case <-wd.ticker.C:
 			//todo watchDog 在这里执行你的周期性任务
 			log.Println("watchDog tick")
+			for _, op := range ops {
+				op()
+			}
 		case <-wd.stopCh:
 			return
 		}

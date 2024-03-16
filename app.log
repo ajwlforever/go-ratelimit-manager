@@ -1,0 +1,134 @@
+2024/03/16 19:00:07 2024/03/16 19:00:07 Key:token Result:allow
+2024/03/16 19:00:07 rejectCnt:  0
+2024/03/16 19:00:07 accessCnt:  1
+2024/03/16 19:00:07 accepted
+2024/03/16 19:00:08 2024/03/16 19:00:08 Key:token Result:reject
+2024/03/16 19:00:08 rejectCnt:  1
+2024/03/16 19:00:08 accessCnt:  1
+2024/03/16 19:00:08 rejected
+2024/03/16 19:00:10 2024/03/16 19:00:10 Key:token Result:reject
+2024/03/16 19:00:10 rejectCnt:  2
+2024/03/16 19:00:10 accessCnt:  1
+2024/03/16 19:00:10 rejected again
+2024/03/16 19:00:11 2024/03/16 19:00:11 Key:token Result:allow
+2024/03/16 19:00:11 rejectCnt:  2
+2024/03/16 19:00:11 accessCnt:  2
+2024/03/16 19:00:11 accepted
+2024/03/16 19:04:51 Initializing TokenBucketLimiter: api_ai
+2024/03/16 19:04:51 Initializing SlideWindowLimiter: user_login
+2024/03/16 19:04:51 Initializing FixedWindowLimiter: filedown
+2024/03/16 19:04:51 Initializing RedisTokenLimiter: global_rate_limiter
+2024/03/16 19:05:21 watchDog tick
+2024/03/16 19:05:21 watchDog: global_rate_limiter  AllowCnt: 0  RejectCnt: 0
+2024/03/16 19:05:21 watchDog: api_ai  AllowCnt: 0  RejectCnt: 0
+2024/03/16 19:05:21 watchDog: user_login  AllowCnt: 0  RejectCnt: 0
+2024/03/16 19:05:21 watchDog: filedown  AllowCnt: 0  RejectCnt: 0
+2024/03/16 19:05:22 2024/03/16 19:05:22 Key:api_ai Result:allow
+2024/03/16 19:05:22 rejectCnt:  0
+2024/03/16 19:05:22 accessCnt:  1
+2024/03/16 19:05:22 accepted
+2024/03/16 19:05:22 2024/03/16 19:05:22 Key:api_ai Result:allow
+2024/03/16 19:05:22 rejectCnt:  0
+2024/03/16 19:05:22 accessCnt:  2
+2024/03/16 19:05:22 accepted
+2024/03/16 19:05:23 2024/03/16 19:05:23 Key:api_ai Result:allow
+2024/03/16 19:05:23 rejectCnt:  0
+2024/03/16 19:05:23 accessCnt:  3
+2024/03/16 19:05:23 accepted
+2024/03/16 19:05:24 2024/03/16 19:05:24 Key:api_ai Result:allow
+2024/03/16 19:05:24 rejectCnt:  0
+2024/03/16 19:05:24 accessCnt:  4
+2024/03/16 19:05:24 accepted
+2024/03/16 19:05:24 2024/03/16 19:05:24 Key:api_ai Result:allow
+2024/03/16 19:05:24 rejectCnt:  0
+2024/03/16 19:05:24 accessCnt:  5
+2024/03/16 19:05:24 accepted
+2024/03/16 19:05:25 2024/03/16 19:05:25 Key:api_ai Result:allow
+2024/03/16 19:05:25 rejectCnt:  0
+2024/03/16 19:05:25 accessCnt:  6
+2024/03/16 19:05:25 accepted
+2024/03/16 19:05:25 2024/03/16 19:05:25 Key:api_ai Result:allow
+2024/03/16 19:05:25 rejectCnt:  0
+2024/03/16 19:05:25 accessCnt:  7
+2024/03/16 19:05:25 accepted
+2024/03/16 19:05:26 2024/03/16 19:05:26 Key:api_ai Result:allow
+2024/03/16 19:05:26 rejectCnt:  0
+2024/03/16 19:05:26 accessCnt:  8
+2024/03/16 19:05:26 accepted
+2024/03/16 19:05:27 2024/03/16 19:05:27 Key:api_ai Result:allow
+2024/03/16 19:05:27 rejectCnt:  0
+2024/03/16 19:05:27 accessCnt:  9
+2024/03/16 19:05:27 accepted
+2024/03/16 19:05:28 2024/03/16 19:05:28 Key:api_ai Result:allow
+2024/03/16 19:05:28 rejectCnt:  0
+2024/03/16 19:05:28 accessCnt:  10
+2024/03/16 19:05:28 accepted
+2024/03/16 19:05:29 2024/03/16 19:05:29 Key:api_ai Result:allow
+2024/03/16 19:05:29 rejectCnt:  0
+2024/03/16 19:05:29 accessCnt:  11
+2024/03/16 19:05:29 accepted
+2024/03/16 19:05:30 2024/03/16 19:05:30 Key:api_ai Result:allow
+2024/03/16 19:05:30 rejectCnt:  0
+2024/03/16 19:05:30 accessCnt:  12
+2024/03/16 19:05:30 accepted
+2024/03/16 19:05:30 2024/03/16 19:05:30 Key:api_ai Result:allow
+2024/03/16 19:05:30 rejectCnt:  0
+2024/03/16 19:05:30 accessCnt:  13
+2024/03/16 19:05:30 accepted
+2024/03/16 19:05:31 2024/03/16 19:05:31 Key:api_ai Result:allow
+2024/03/16 19:05:31 rejectCnt:  0
+2024/03/16 19:05:31 accessCnt:  14
+2024/03/16 19:05:31 accepted
+2024/03/16 19:05:31 2024/03/16 19:05:31 Key:api_ai Result:allow
+2024/03/16 19:05:31 rejectCnt:  0
+2024/03/16 19:05:31 accessCnt:  15
+2024/03/16 19:05:31 accepted
+2024/03/16 19:05:32 2024/03/16 19:05:32 Key:api_ai Result:allow
+2024/03/16 19:05:32 rejectCnt:  0
+2024/03/16 19:05:32 accessCnt:  16
+2024/03/16 19:05:32 accepted
+2024/03/16 19:05:34 2024/03/16 19:05:34 Key:api_ai Result:allow
+2024/03/16 19:05:34 rejectCnt:  0
+2024/03/16 19:05:34 accessCnt:  17
+2024/03/16 19:05:34 accepted
+2024/03/16 19:05:36 2024/03/16 19:05:36 Key:filedown Result:allow
+2024/03/16 19:05:36 rejectCnt:  0
+2024/03/16 19:05:36 accessCnt:  1
+2024/03/16 19:05:36 accepted
+2024/03/16 19:05:37 2024/03/16 19:05:37 Key:filedown Result:allow
+2024/03/16 19:05:37 rejectCnt:  0
+2024/03/16 19:05:37 accessCnt:  2
+2024/03/16 19:05:37 accepted
+2024/03/16 19:05:39 2024/03/16 19:05:39 Key:filedown Result:allow
+2024/03/16 19:05:39 rejectCnt:  0
+2024/03/16 19:05:39 accessCnt:  3
+2024/03/16 19:05:39 accepted
+2024/03/16 19:05:39 2024/03/16 19:05:39 Key:filedown Result:allow
+2024/03/16 19:05:39 rejectCnt:  0
+2024/03/16 19:05:39 accessCnt:  4
+2024/03/16 19:05:39 accepted
+2024/03/16 19:05:41 2024/03/16 19:05:41 Key:filedown Result:allow
+2024/03/16 19:05:41 rejectCnt:  0
+2024/03/16 19:05:41 accessCnt:  5
+2024/03/16 19:05:41 accepted
+2024/03/16 19:05:42 2024/03/16 19:05:42 Key:filedown Result:allow
+2024/03/16 19:05:42 rejectCnt:  0
+2024/03/16 19:05:42 accessCnt:  6
+2024/03/16 19:05:42 accepted
+2024/03/16 19:05:45 2024/03/16 19:05:45 Key:user_login Result:allow
+2024/03/16 19:05:45 rejectCnt:  0
+2024/03/16 19:05:45 accessCnt:  1
+2024/03/16 19:05:45 accepted
+2024/03/16 19:05:45 2024/03/16 19:05:45 Key:user_login Result:allow
+2024/03/16 19:05:45 rejectCnt:  0
+2024/03/16 19:05:45 accessCnt:  2
+2024/03/16 19:05:45 accepted
+2024/03/16 19:05:46 2024/03/16 19:05:46 Key:user_login Result:allow
+2024/03/16 19:05:46 rejectCnt:  0
+2024/03/16 19:05:46 accessCnt:  3
+2024/03/16 19:05:46 accepted
+2024/03/16 19:05:51 watchDog tick
+2024/03/16 19:05:51 watchDog: api_ai  AllowCnt: 17  RejectCnt: 0
+2024/03/16 19:05:51 watchDog: user_login  AllowCnt: 3  RejectCnt: 0
+2024/03/16 19:05:51 watchDog: filedown  AllowCnt: 6  RejectCnt: 0
+2024/03/16 19:05:51 watchDog: global_rate_limiter  AllowCnt: 0  RejectCnt: 0

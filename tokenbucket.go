@@ -82,6 +82,10 @@ func (b *TokenBucketLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 	}
 }
 
+func (limiter *TokenBucketLimiter) GetRecord() *LimitRecord {
+	return limiter.Record
+}
+
 func (s *TokenBucketLimiter) record(res LimitResult) {
 	item := &Item{
 		Timestamp: time.Now(),

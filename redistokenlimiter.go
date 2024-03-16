@@ -54,6 +54,10 @@ func (r *RedisTokenLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 	return
 }
 
+func (limiter *RedisTokenLimiter) GetRecord() *LimitRecord {
+	return limiter.Record
+}
+
 // record 记录尝试请求的最终结果
 func (s *RedisTokenLimiter) record(res LimitResult) {
 	item := &Item{

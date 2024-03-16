@@ -74,6 +74,10 @@ func (s *SlideWindowLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 	return
 }
 
+func (limiter *SlideWindowLimiter) GetRecord() *LimitRecord {
+	return limiter.Record
+}
+
 // record 记录尝试请求的最终结果
 func (s *SlideWindowLimiter) record(res LimitResult) {
 	item := &Item{

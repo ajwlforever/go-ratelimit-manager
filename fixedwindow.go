@@ -70,6 +70,9 @@ func (limiter *FixedWindowLimiter) TryAcquire(ctx context.Context) (res LimitRes
 	return
 
 }
+func (limiter *FixedWindowLimiter) GetRecord() *LimitRecord {
+	return limiter.Record
+}
 
 func (l *FixedWindowLimiter) record(res LimitResult) {
 	item := &Item{

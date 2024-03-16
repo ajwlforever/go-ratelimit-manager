@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/duke-git/lancet/v2/maputil"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -38,6 +39,7 @@ type Limiter interface {
 	TryAcquire(ctx context.Context) LimitResult
 	// 有需要用key值来获取分布式令牌的
 	// todo StopLimiter
+	GetRecord() *LimitRecord
 }
 
 type LimitResult struct {
@@ -138,10 +140,22 @@ func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr
 	for _, f := range ops {
 		f(svr)
 	}
+	if svr.WatchDog != nil {
+		// start WatchDog
+		wd := svr.WatchDog
+		wd.Start(svr.outputRecords())
+	}
 	return
 
 }
-
+func (svr *RateLimitService) outputRecords() watchSomthing {
+	return func() {
+		maputil.ForEach(svr.Limiters, func(key string, l Limiter) {
+			record := l.GetRecord()
+			log.Println("watchDog:", key, " AllowCnt:", record.allowCnt, " RejectCnt:", record.rejectCnt)
+		})
+	}
+}
 func WithWatchDog(t time.Duration) OptionFunc {
 	return func(svr *RateLimitService) {
 		if t < DefaultWatchDogTimeout {
@@ -149,7 +163,6 @@ func WithWatchDog(t time.Duration) OptionFunc {
 			t = DefaultWatchDogTimeout
 		}
 		wd := newWatchDog(t)
-		wd.Start()
 		svr.WatchDog = wd
 	}
 }

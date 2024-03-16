@@ -96,7 +96,22 @@ func StartWeb() {
 
 }
 
-func StartWebConfiguration() {
+func StartWebConfigurationAndWatchDog() {
+	key1 := "api_ai"
+	key2 := "user_login"
+	key3 := "filedown"
+	key4 := "global_rate_limiter"
+	limiterSvr, _ = NewRateLimitService("", NewRedisClient(), WithWatchDog(time.Second*5))
+	http.HandleFunc("/slide1", ChaninFunc(sayHello, RateLimiting(key2)))
+	http.HandleFunc("/fixed", ChaninFunc(sayHello, RateLimiting(key3)))
+	http.HandleFunc("/token", ChaninFunc(sayHello, RateLimiting(key1)))
+	http.HandleFunc("/redis", ChaninFunc(sayHello, RateLimiting(key4)))
+
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		log.Println(" http.ListenAndServe Error: ")
+		panic(err)
+	}
 
 }
 func init() {

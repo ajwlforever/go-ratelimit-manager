@@ -72,7 +72,7 @@ limiter =   NewLimiter(WithFixedWindowLimiter(time.Second*5, 1))
     InitTokens = 500 # 初始化令牌数量
  
 ```
-`func NewRateLimitService(path string, rdb *redis.Client)` 中`path`是配置路径地址，rdb是redis客户端；如果path为空的话，config如上述所示。
+`func NewRateLimitService(path string, rdb *redis.Client)` 中`path`是配置路径地址，配置文件参考上述，每一个限流器必须要有Type和Key，其余的参数根据不同的种类有不同的参数，参数是必须填写。rdb是redis客户端； 
 
 ``` go
 func TestConfiguration(t *testing.T) {

@@ -18,6 +18,7 @@ type RedisTokenLimiter struct {
 	MaxCount            int
 	initTokens          int
 	key                 string
+	Record              *LimitRecord
 }
 
 func (r *RedisTokenLimiter) toParams() []any {
@@ -49,8 +50,22 @@ func (r *RedisTokenLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 	} else {
 		res.Ok = true
 	}
-
+	r.record(res)
 	return
+}
+
+// record 记录尝试请求的最终结果
+func (s *RedisTokenLimiter) record(res LimitResult) {
+	item := &Item{
+		Timestamp: time.Now(),
+		Key:       s.key,
+		Allowed:   res.Ok,
+		Reason:    "RedisTokenLimiter rejected",
+	}
+	s.Record.Save(item, DETAIL_LEVEL_1)
+	log.Println(item.String())
+	log.Println("rejectCnt: ", s.Record.rejectCnt)
+	log.Println("accessCnt: ", s.Record.allowCnt)
 }
 
 func NewRedisTokenLimiter(rdb *redis.Client, key string, intervalPerPermit time.Duration, resetBucketInterval time.Duration,
@@ -63,6 +78,7 @@ func NewRedisTokenLimiter(rdb *redis.Client, key string, intervalPerPermit time.
 		initTokens:          initToken,
 		MaxCount:            MaxCount,
 		intervalPerPermit:   intervalPerPermit,
+		Record:              NewLimitRecord(),
 	}
 	return limiter
 

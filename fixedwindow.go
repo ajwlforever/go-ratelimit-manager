@@ -16,12 +16,14 @@ type FixedWindowLimiter struct {
 	MaxCount int           // number 窗口期允许请求的数量
 	mu       sync.Mutex
 	Key      string //
+	Record   *LimitRecord
 }
 
 // NewFixedWindowLimiter
 func NewFixedWindowLimiter(key string, unitTime time.Duration, maxCount int) *FixedWindowLimiter {
 
 	f := &FixedWindowLimiter{
+		Record:   NewLimitRecord(),
 		UnitTime: unitTime,
 		Count:    0,
 		MaxCount: maxCount,
@@ -58,11 +60,26 @@ func (limiter *FixedWindowLimiter) TryAcquire(ctx context.Context) (res LimitRes
 	if limiter.Count < limiter.MaxCount {
 		limiter.Count += 1
 		res.Ok = true
+		limiter.record(res)
 		return
 	}
 
 	// curTime := time.Now()
 	res.Ok = false
+	limiter.record(res)
 	return
 
+}
+
+func (l *FixedWindowLimiter) record(res LimitResult) {
+	item := &Item{
+		Timestamp: time.Now(),
+		Key:       l.Key,
+		Allowed:   res.Ok,
+		Reason:    "FixedWindowLimiter rejected",
+	}
+	l.Record.Save(item, DETAIL_LEVEL_1)
+	log.Println(item.String())
+	log.Println("rejectCnt: ", l.Record.rejectCnt)
+	log.Println("accessCnt: ", l.Record.allowCnt)
 }

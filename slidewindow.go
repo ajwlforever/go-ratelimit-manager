@@ -66,6 +66,7 @@ func (s *SlideWindowLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 		s.Count += 1
 		s.Cnts[s.Index] += 1
 		res.Ok = true
+		s.record(res)
 		return
 	}
 	res.Ok = false
@@ -82,6 +83,9 @@ func (s *SlideWindowLimiter) record(res LimitResult) {
 		Reason:    "SlideWindowLimiter rejected",
 	}
 	s.Record.Save(item, DETAIL_LEVEL_1)
+	log.Println(item.String())
+	log.Println("rejectCnt: ", s.Record.rejectCnt)
+	log.Println("accessCnt: ", s.Record.allowCnt)
 }
 
 // calculateWindowCount 计算 unitTime 被 smallUnitTime划分为几份

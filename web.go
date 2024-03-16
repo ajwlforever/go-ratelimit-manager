@@ -66,7 +66,7 @@ func ChaninFunc(f http.HandlerFunc, middleWires ...MiddleWire) http.HandlerFunc 
 func StartWeb() {
 	// 滑动窗口算法 1s为大窗口 0.1s 为小窗口
 	key1 := "slide1"
-	limiterSvr.Limiters[key1] = NewSlideWindowLimiter(key1, time.Second*10, time.Second*5, 1)
+	limiterSvr.Limiters[key1] = NewSlideWindowLimiter(key1, time.Second*10, time.Second*1, 100)
 	// 固定窗口算法 5s 只允许通过一个请求
 	key2 := "fixed" //利用key值实现 某个接口的 自定义限流器
 	limiterSvr.Limiters[key2] = NewLimiter(WithFixedWindowLimiter(key2, time.Second*5, 1))

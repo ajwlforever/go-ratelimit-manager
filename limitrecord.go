@@ -1,6 +1,7 @@
 package goratelimitmanager
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -74,4 +75,16 @@ func (record *LimitRecord) allSave(item *Item) {
 		record.allowCnt += 1
 		record.rejects = append(record.rejects, *item)
 	}
+}
+
+func (item Item) String() string {
+	formatString := "2006/01/02 15:04:05"
+	res := ""
+	if item.Allowed {
+		res = "allow"
+	} else {
+		res = "reject"
+	}
+	return fmt.Sprintf("%v Key:%v Result:%v", item.Timestamp.Format(formatString), item.Key, res)
+
 }

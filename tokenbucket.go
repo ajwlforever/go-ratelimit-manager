@@ -2,6 +2,7 @@ package goratelimitmanager
 
 import (
 	"context"
+	"log"
 	"sync"
 	"time"
 )
@@ -13,9 +14,10 @@ type TokenBucketLimiter struct {
 	WaitTime  time.Duration // 没有令牌请求等待时间
 	MaxCount  int           // 令牌桶的容量
 
-	Mu   *sync.Mutex // 令牌桶锁，保证线程安全
-	Stop bool        // 停止标记，结束令牌桶
-	Key  string
+	Mu     *sync.Mutex // 令牌桶锁，保证线程安全
+	Stop   bool        // 停止标记，结束令牌桶
+	Key    string
+	Record *LimitRecord
 }
 
 // NewTokenBucketLimiter
@@ -24,6 +26,7 @@ func NewTokenBucketLimiter(key string, limitRate time.Duration, maxCount int, wa
 		panic("token bucket cap must be large 1")
 	}
 	l := &TokenBucketLimiter{
+		Record:    NewLimitRecord(),
 		Key:       key,
 		LimitRate: limitRate,
 		TokenChan: make(chan struct{}, maxCount),
@@ -68,13 +71,28 @@ func (b *TokenBucketLimiter) TryAcquire(ctx context.Context) (res LimitResult) {
 	select {
 	case <-b.TokenChan:
 		res.Ok = true
+		b.record(res)
 		return
 	default:
 		// tuichu
 		res.Ok = false
 		res.WaitTime = b.WaitTime
+		b.record(res)
 		return
 	}
+}
+
+func (s *TokenBucketLimiter) record(res LimitResult) {
+	item := &Item{
+		Timestamp: time.Now(),
+		Key:       s.Key,
+		Allowed:   res.Ok,
+		Reason:    "TokenBucketLimiter rejected",
+	}
+	s.Record.Save(item, DETAIL_LEVEL_1)
+	log.Println(item.String())
+	log.Println("rejectCnt: ", s.Record.rejectCnt)
+	log.Println("accessCnt: ", s.Record.allowCnt)
 }
 
 // todo StopLimiter

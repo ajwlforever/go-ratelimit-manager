@@ -35,7 +35,8 @@ func main() {
 
 ```
 ### 1. Use
-
+创建xxx限流器的方式:
+`NewxxxLimiter` 或者 `NewLimiter(WithxxxLimiter())`
 #### (1). FixedWindowLimiter
 ``` go
 // NewFixedWindowLimiter
@@ -56,8 +57,31 @@ limiter =  NewFixedWindowLimiter(time.Second*5, 1)
 limiter =   NewLimiter(WithFixedWindowLimiter(time.Second*5, 1))
 ```
 #### (2). SlideWindowLimiter
+``` go 
+type SlideWindowLimiter struct {
+	UnitTime      time.Duration // 窗口时间
+	SmallUnitTime time.Duration // 小窗口时间
+	Cnts          []int         //  每个小窗口的请求数量 - 固定大小- 模拟循环队列
+	Index         int           // 目前在循环队列的index
+	Count         int           // 实际的请求数量
+	MaxCount      int           // number 窗口期允许请求的数量
+	Mu            sync.Mutex    //
+}
+func NewSlideWindowLimiter(unitTime time.Duration, smallUnitTime time.Duration, maxCount int)
+
+slide = NewSlideWindowLimiter(time.Second*10, time.Second*5, 1)
+slide = NewLimiter(WithSlideWindowLimiter(time.Second*10, time.Second*5, 1))
+```
 #### (3). TokenBucketLimiter
+``` go 
+func WithTokenBucketLimiter(limitRate time.Duration, maxCount int, waitTime time.Duration) 
+limiter = NewLimiter(WithTokenBucketLimiter(time.Second*5, 1, 2*time.Second))
+```
 #### (4). RedisTokenLimiter
+``` go
+func WithRedisTokenLimiter(rdb *redis.Client, key string, intervalPerPermit time.Duration, resetBucketInterval time.Duration,
+	initToken int, MaxCount int)
+```
 ### 2.Configuration
 ``` toml  
 # RateLimiterService配置文件

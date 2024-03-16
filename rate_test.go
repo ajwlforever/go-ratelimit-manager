@@ -1,11 +1,14 @@
 package goratelimitmanager
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 	"time"
@@ -142,4 +145,71 @@ func TestConfiguration(t *testing.T) {
 	} else {
 		fmt.Println("reject")
 	}
+}
+
+func Test123(t *testing.T) {
+	// 输出当前目录下有多少行代码
+	test()
+}
+
+func test() {
+	totalLines, err := countLinesInDir(".")
+	if err != nil {
+		fmt.Printf("Error counting lines: %s\n", err)
+		return
+	}
+
+	fmt.Printf("Total lines of code: %d\n", totalLines)
+}
+
+// countLinesInDir 返回指定目录及其所有子目录中所有Go文件的代码行数总和
+func countLinesInDir(dirPath string) (int, error) {
+	totalLines := 0
+
+	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		if filepath.Ext(path) == ".go" {
+			lines, err := countLinesInFile(path)
+			if err != nil {
+				return err
+			}
+			totalLines += lines
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	return totalLines, nil
+}
+
+// countLinesInFile 返回文件中的代码行数
+func countLinesInFile(filePath string) (int, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return 0, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	lines := 0
+	for scanner.Scan() {
+		lines++
+	}
+
+	if err := scanner.Err(); err != nil {
+		return 0, err
+	}
+
+	return lines, nil
 }

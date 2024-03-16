@@ -29,8 +29,10 @@ type RateLimitConfig struct {
 }
 type LimiterOption func() Limiter
 
+type OptionFunc func(svr *RateLimitService)
 type RateLimitService struct {
 	Limiters map[string]Limiter
+	WatchDog *watchDog
 }
 type Limiter interface {
 	TryAcquire(ctx context.Context) LimitResult
@@ -43,7 +45,7 @@ type LimitResult struct {
 	WaitTime time.Duration
 }
 
-func NewRateLimitService(path string, rdb *redis.Client) (svr *RateLimitService, err error) {
+func NewRateLimitService(path string, rdb *redis.Client, ops ...OptionFunc) (svr *RateLimitService, err error) {
 	if path != "" {
 		ConfigPath = path
 	}
@@ -131,8 +133,24 @@ func NewRateLimitService(path string, rdb *redis.Client) (svr *RateLimitService,
 		}
 	}
 
+	// OptionFunc 扩展--用于增加新功能
+	for _, f := range ops {
+		f(svr)
+	}
 	return
 
+}
+
+func WithWatchDog(t time.Duration) OptionFunc {
+	return func(svr *RateLimitService) {
+		if t < DefaultWatchDogTimeout {
+			// 小于DefaultWatchDogTimeout 使用默认检测时间DefaultWatchDogTimeout
+			t = DefaultWatchDogTimeout
+		}
+		wd := newWatchDog(t)
+		wd.Start()
+		svr.WatchDog = wd
+	}
 }
 
 // 创建固定窗口限流器的Option

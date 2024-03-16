@@ -213,3 +213,9 @@ func countLinesInFile(filePath string) (int, error) {
 
 	return lines, nil
 }
+
+func TestWatchDog(t *testing.T) {
+	svr, _ := NewRateLimitService("", NewRedisClient(), WithWatchDog(time.Second*5))
+	fmt.Println(svr)
+	time.Sleep(time.Hour * 5)
+}

@@ -202,6 +202,15 @@ func WithRedisTokenLimiter(rdb *redis.Client, key string, intervalPerPermit time
 
 }
 
+// 创建redis分布式限流的Option
+func WithRedisTokenLimiter(key string, intervalPerPermit time.Duration, resetBucketInterval time.Duration,
+	initToken int, bucketMaxTokens int) LimiterOption {
+	return func() Limiter {
+		limiter := NewRedisTokenLimiter(key, intervalPerPermit, resetBucketInterval, initToken, bucketMaxTokens)
+		return limiter
+	}
+}
+
 func NewLimiter(option LimiterOption) Limiter {
 	return option()
 }

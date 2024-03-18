@@ -13,11 +13,16 @@ type TokenBucketLimiter struct {
 	TokenChan chan struct{} // 令牌通道，可以理解为桶
 	WaitTime  time.Duration // 没有令牌请求等待时间
 	MaxCount  int           // 令牌桶的容量
+<<<<<<< Updated upstream
 
 	Mu     *sync.Mutex // 令牌桶锁，保证线程安全
 	Stop   bool        // 停止标记，结束令牌桶
 	Key    string
 	Record *LimitRecord
+=======
+	Mu        *sync.Mutex   // 令牌桶锁，保证线程安全
+	Stop      bool          // 停止标记，结束令牌桶
+>>>>>>> Stashed changes
 }
 
 // NewTokenBucketLimiter
